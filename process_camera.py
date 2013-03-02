@@ -10,15 +10,10 @@ import scipy.misc
 
 import skimage.data
 from skimage import color, filter, io
-
 from skimage import exposure, transform
-#from skimage.filter import threshold_otsu, threshold_adaptive
-
-from skimage import segmentation
-from skimage.morphology import skeletonize
 
 
-def preprocess(image, height=50, block_size=30):
+def preprocess(image, height=50, block_size=50):
     """Turn to greyscale, scale to a height, and then threshold to binary
     
     """
@@ -36,8 +31,6 @@ def separate_chars(image, n_chars=6):
     
     
     """
-    
-    
     image = np.asarray(image, dtype=np.int)
     width = image.shape[1]
     ideal_region_width = width / n_chars
@@ -71,7 +64,10 @@ def separate_chars(image, n_chars=6):
 
     chars = []
     for i in range(len(xf)-1):
-        chars.append(image[:, xf[i]:xf[i+1]])
+        char = image[:, xf[i]:xf[i+1]]
+        char = transform.resize(1.0*char, output_shape=(25, 15))
+        char = filter.threshold_adaptive(char, block_size=30)
+        chars.append(char)
 
     return chars
 
@@ -86,11 +82,7 @@ def main():
         final = preprocess(io.imread(fn))
         chars = separate_chars(final)
         for j, char in enumerate(chars):
-            img = transform.resize(np.asarray(char, dtype=bool),
-                output_shape=(25, 15))
-            img = filter.threshold_adaptive(img, block_size=50)
-
-            ax[i, j].imshow(img, interpolation='none')
+            ax[i, j].imshow(char, interpolation='none')
             ax[i, j].axis('off')
 
     pp.suptitle('Binarized Camera Images')

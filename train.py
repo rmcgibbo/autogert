@@ -155,6 +155,6 @@ def fit(output_fn):
     logging.info('SAVED CLASSIFIER TO %s' % output_fn)
 
 if __name__ == '__main__':
-    #fit('classifier.pickl')
-    main()
+    fit('classifier.pickl')
+    #main()
     
