@@ -1,2 +1,2 @@
-# ACRE
-_digit OCR_
+# AutoGert
+digit OCR engine
