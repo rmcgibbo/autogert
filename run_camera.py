@@ -12,12 +12,12 @@ def main():
     with(open('settings.yml')) as f:
         settings = yaml.load(f)
 
-    img = img[settings['box_y'] : settings['box_y'] + settings['box_h'],
-              settings['box_x'] : settings['box_x'] + settings['box_w'], :]
+    #img = img[settings['box_y'] : settings['box_y'] + settings['box_h'],
+    #          settings['box_x'] : settings['box_x'] + settings['box_w'], :]
 
-    img = preprocess(img)
+    #img = preprocess(img)
 
-    name = 'images/%d.png' % time.time()
+    name = 'images2/%d.png' % time.time()
     scipy.misc.imsave(name, img)
 
     print 'Image Saved to %s' % name
@@ -26,6 +26,6 @@ def main():
 if __name__ == '__main__':
     while True:
         main()
-        time.sleep(45)
+        time.sleep(30)
         
 
