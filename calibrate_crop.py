@@ -12,19 +12,20 @@ import matplotlib.pyplot as pp
 
 with open('settings.yml') as f:
     settings = yaml.load(f)
-    box_xy = (settings['box_x'], settings['box_y'])
-    box_width = settings['box_w']
-    box_height = settings['box_h']
+    box_xy = (settings['crop'][0]['box_x'], settings['crop'][0]['box_y'])
+    box_width = settings['crop'][0]['box_w']
+    box_height = settings['crop'][0]['box_h']
     template = settings['template_img']
 
 img = io.imread(template)
+#img = capture_image(tmp_fn='template.png')
 
 
 fig, axes = pp.subplots(nrows=2, ncols=1, figsize=(8, 5))
 pp.gray()
 
-zoom_horizontal = (350, 550)
-zoom_vertial = (450, 350)
+zoom_horizontal = (250, 550)
+zoom_vertial = (450, 150)
 # box_xy = (370, 342)
 # box_width = 122
 # box_height = 37
@@ -46,7 +47,9 @@ def onpress(event, force=False):
         axes[1].imshow(img2)
         axes[1].xaxis.grid(color='gray', which='minor', linestyle='dashed')
         
-        print dict(box_x=x0, box_y=y0, box_w=w0, box_h=h0)
+        print '\n\n'
+        for k, v in dict(box_x=x0, box_y=y0, box_w=w0, box_h=h0).iteritems():
+            print '%s: %s' % (k, v)
 
 # trigger at beginning
 onpress(None, force=True)

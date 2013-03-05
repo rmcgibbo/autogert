@@ -1,5 +1,22 @@
-box_w: 122
-box_h: 37
-box_y: 373.6875
-box_x: 417.3125
+# # calibration for the current camera setup
+---
+crop:
+  - box_w: 120
+    box_h: 37
+    box_y: 226
+    box_x: 312
+
+  - box_w: 120
+    box_h: 37
+    box_y: 380
+    box_x: 313
+
 template_img: template.png
+
+# this is the calibration for the raw_images
+# box_y: 373.6875
+# box_x: 417.3125
+# box_w: 122
+# box_h: 37
+# template_img: raw_images/template.png
+

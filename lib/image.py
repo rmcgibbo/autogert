@@ -9,8 +9,6 @@ import numpy as np
 import fastcluster
 from scipy import optimize
 from scipy.cluster.hierarchy import fcluster
-#from scipy.cluster.vq import kmeans, vq
-#import scipy.misc
 
 import skimage.data
 from skimage import color, filter, io, segmentation
@@ -30,20 +28,29 @@ def preprocess(image, height=50, block_size=50):
     return image
 
 
-# def split(image, charseps):
-#     """Split an image into characters. Charseps should be a list of ints
-#     giving the horizontal location to split
-#     """
-#     n_chars = len(charseps) - 1
-# 
-#     chars = []
-#     for i in range(n_chars):
-#         char = image[:, charseps[i]:charseps[i+1]]
-#         char = transform.resize(char, output_shape=(25, 15))
-#         char = filter.threshold_adaptive(char, block_size=30)
-#         chars.append(char)
-# 
-#     return chars
+def crop(img, boundaries):
+    h = boundaries['box_h']
+    w = boundaries['box_w']
+    x = boundaries['box_x']
+    y = boundaries['box_y']
+    
+    return img[y:y+h, x:x+w]
+
+
+def split_rigid(image, charseps):
+    """Split an image into characters. Charseps should be a list of ints
+    giving the horizontal location to split
+    """
+    n_chars = len(charseps) - 1
+
+    chars = []
+    for i in range(n_chars):
+        char = image[:, charseps[i]:charseps[i+1]]
+        char = transform.resize(char, output_shape=(25, 15))
+        char = filter.threshold_adaptive(char, block_size=30)
+        chars.append(char)
+
+    return chars
 
 
 def split(image, plot=False):

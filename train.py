@@ -5,12 +5,13 @@ import time
 import numpy as np
 import matplotlib.pyplot as pp
 import glob
-
+import cPickle as pickle
 
 from skimage import io
 from sklearn import cross_validation, svm
 
-from lib.image import split, align_fft, preprocess
+from lib.learning import predict
+from lib.image import split, crop
 
 def collect_dataset():
     with(open('training/training_set.yml')) as f:
@@ -21,6 +22,8 @@ def collect_dataset():
     for fn, answer in labels.iteritems():
         path = os.path.join('training', fn)
         chars = split(io.imread(path))
+        
+        print 'fn', fn
 
         assert len(chars) == len(answer)
         for char, label in zip(chars, answer):
@@ -47,39 +50,9 @@ def train(X, y):
     return clf
 
 
-def crop(img, settings):
-    h = settings['box_h']
-    w = settings['box_w']
-    x = settings['box_x']
-    y = settings['box_y']
-    
-    return img[y:y+h, x:x+w]
-
-def predict(clf, settings, img_fn=None, align_template=None):
-    if img_fn is None:
-        raise NotImplementedError('Camera!')
-    else:
-        raw_img = io.imread(img_fn)
-
-    if align_template is None:
-        aligned_img = raw_img
-    else:
-        aligned_img = align_fft(raw_img, align_template)
-
-    cropped_img = crop(aligned_img, settings)
-    binarized_img = preprocess(cropped_img)
-    chars = split(binarized_img)
-    
-    # this gets an array of ints
-    predictions = clf.predict(np.array([c.reshape(-1) for c in chars]))
-    # make into a string
-    prediction = ''.join([str(p) for p in predictions])
-    return prediction, binarized_img, chars
-
 def interactive_benchmark(clf, raw_images_glob, save_to):
     with(open('settings.yml')) as f:
         settings = yaml.load(f)
-        template = io.imread(settings['template_img'])
 
     # interactive plotting
     pp.ion()
@@ -103,8 +76,8 @@ def interactive_benchmark(clf, raw_images_glob, save_to):
             print 'Already trained on %s. Skipping' % fn
             continue
         
-        prediction, binarized_img, chars = predict(clf, img_fn=fn,
-            settings=settings)
+        prediction, binarized_img, chars = predict(clf, img=fn,
+            boundaries=settings['crop'][0])
         
         # plot the binarize_img across the top panel
         pp.clf()
@@ -154,6 +127,13 @@ def interactive_benchmark(clf, raw_images_glob, save_to):
 def main():
     X, y = collect_dataset()
     clf = train(X, y)
+    
+    
+    clf_fn = 'classifier.pickle'
+    print 'Saving classifier to disk: %s' % clf_fn
+    with open(clf_fn, 'wb') as f:
+        pickle.dump(clf, f)
+    
     interactive_benchmark(clf, raw_images_glob='raw_images/*.png',
         save_to='interactive_training')
         
