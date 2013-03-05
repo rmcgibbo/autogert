@@ -13,6 +13,9 @@ crop:
 
 template_img: template.png
 
+users:
+  rmcgibbo: password
+
 # this is the calibration for the raw_images
 # box_y: 373.6875
 # box_x: 417.3125
